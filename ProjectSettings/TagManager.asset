@@ -6,6 +6,8 @@ TagManager:
   tags:
   - GM
   - House1
+  - PPColider
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -7,6 +7,9 @@ public class PlayerCombat : MonoBehaviour
 {
     public Animator animator;
 
+    public Transform playerTransform;
+    public Vector3 objectScale;
+
     public Transform attackPoint;
     public LayerMask enemyLayers;
 
@@ -19,6 +22,8 @@ public class PlayerCombat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        objectScale = playerTransform.localScale;
+
         if (Time.time >= nextAttackTime)
         {
             if (Input.GetMouseButtonDown(0))
@@ -41,6 +46,15 @@ public class PlayerCombat : MonoBehaviour
         foreach(Collider2D enemy in hitEnemies)
         {
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            if (objectScale == new Vector3(1.5f, 1.5f, 1))
+            {
+                enemy.GetComponent<Enemy>().Knockback(new Vector2 (1, 0.6f));
+            }
+            else
+            {
+                enemy.GetComponent<Enemy>().Knockback(new Vector2 (-1, 0.6f));
+            }
+            
         }
     }
 

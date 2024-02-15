@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
+using System.Linq.Expressions;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -21,6 +23,15 @@ public class PlayerMovement : MonoBehaviour
     private float jumpBufferTime = 0.175f;
     private float jumpBufferCounter;
 
+    public int maxHealth = 100;
+    int currentHealth;
+
+    public float KBForce;
+    public float KBCounter;
+    public float KBTotalTime;
+
+    public bool KnockFromRight;
+
     [SerializeField] GameObject Button1;
     [SerializeField] GameObject PlatformButton1;
 
@@ -34,11 +45,18 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();
+        currentHealth = maxHealth;
     }
    
     // Update is called once per frame
     void Update()
     {
+        if (DialogueManager.isActive == true)
+        {
+            horizontal = 0;
+            return;
+        } 
+
         horizontal = Input.GetAxisRaw("Horizontal");
 
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
@@ -82,10 +100,25 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-      
+        if(KBCounter <= 0)
+        {
+            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        }
+        else
+        {
+            if(KnockFromRight == true)
+            {
+                rb.velocity = new Vector2(-KBForce, KBForce);
+            }
+            if(KnockFromRight == false)
+            {
+                rb.velocity = new Vector2(KBForce, KBForce);
+            }
 
+            KBCounter -= Time.deltaTime;
+        }
+        
+        
         if (horizontal != 0)
         {
             //CreateDust();
@@ -117,8 +150,33 @@ public class PlayerMovement : MonoBehaviour
         }
     }*/
 
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        Debug.Log("Player's health = " + currentHealth);
+
+        if(currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Debug.Log("Player Ded!!");
+    }
+
     void OnCollisionEnter2D(Collision2D col)
     {
-    
+        if(col.gameObject.tag == "Enemy")
+        {
+            currentHealth = currentHealth - 20;
+            Debug.Log("Player's health = " + currentHealth);
+        }
+        if(currentHealth <= 0)
+        {
+            
+        }
     }
+
 }
