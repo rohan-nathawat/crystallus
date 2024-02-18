@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private float jumpBufferTime = 0.175f;
     private float jumpBufferCounter;
 
-    public int maxHealth = 100;
+    public int maxHealth = 200;
     int currentHealth;
 
     public float KBForce;
@@ -32,11 +32,17 @@ public class PlayerMovement : MonoBehaviour
 
     public bool KnockFromRight;
 
+    public GameOverScreen GameOverScreen;
+
+    public HealthBar healthBar;
+
     [SerializeField] GameObject Button1;
     [SerializeField] GameObject PlatformButton1;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] Transform player;
+    [SerializeField] GameObject goPlayer;
+    [SerializeField] GameObject healthBarTransform;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform wallCheck;
@@ -44,8 +50,10 @@ public class PlayerMovement : MonoBehaviour
     
     void Start()
     {
+        goPlayer.SetActive(true);
         gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();
         currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
    
     // Update is called once per frame
@@ -138,6 +146,7 @@ public class PlayerMovement : MonoBehaviour
             facingRight = !facingRight;
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
+            healthBarTransform.transform.localScale *= new Vector2(-1, 1); 
             transform.localScale = localScale;
         }
     }
@@ -153,6 +162,8 @@ public class PlayerMovement : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        healthBar.SetHealth(currentHealth);
+        animator.SetTrigger("Hurt");
         Debug.Log("Player's health = " + currentHealth);
 
         if(currentHealth <= 0)
@@ -163,19 +174,21 @@ public class PlayerMovement : MonoBehaviour
 
     void Die()
     {
+        goPlayer.SetActive(false);
+        GameOverScreen.Enable();
         Debug.Log("Player Ded!!");
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if(col.gameObject.tag == "Enemy")
+        if(col.collider.CompareTag("Lava"))
         {
-            currentHealth = currentHealth - 20;
-            Debug.Log("Player's health = " + currentHealth);
+            Die();
         }
-        if(currentHealth <= 0)
+
+        if (col.gameObject.tag == "Portal")
         {
-            
+             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 

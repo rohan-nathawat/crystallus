@@ -25,7 +25,7 @@ public class DialogueManager : MonoBehaviour
         isActive = true;
         Debug.Log("Were talking abt tis:" + messages.Length);
         DisplayMessage();
-        backgroundBox.LeanScale(new Vector3(77.2f, 77.2f, 76.86363f), 0.25f);
+        backgroundBox.LeanScale(new Vector3(32.2f, 33f, 76.86363f), 0.25f);
     }
 
     void DisplayMessage() 

@@ -8,6 +8,8 @@ TagManager:
   - House1
   - PPColider
   - Enemy
+  - Lava
+  - Portal
   layers:
   - Default
   - TransparentFX
